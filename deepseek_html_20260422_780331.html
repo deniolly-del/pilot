@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Исследование личностных особенностей и просмотра видео</title>
+
+  <!-- jsPsych 7 + plugins -->
+  <script src="https://unpkg.com/jspsych@7.3.4"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-survey-multi-choice@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-survey-html-form@1.0.3"></script>
+  <link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css">
+
+  <!-- DataPipe -->
+  <script src="https://unpkg.com/@jspsych-contrib/plugin-pipe@0.4"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400&family=Fraunces:opsz,wght@9..144,300;9..144,500&display=swap');
+
+    body { background: #fafafa; touch-action: manipulation; }
+    * { touch-action: manipulation; }
+
+    .jspsych-display-element {
+      overflow-y: auto !important;
+    }
+
+    .jspsych-content {
+      font-family: 'DM Mono', monospace;
+      max-width: 700px;
+    }
+
+    .page {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      color: #2a2a2a;
+      font-size: 18px;
+      line-height: 1.7;
+      text-align: left;
+      padding: 30px 20px;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+    .page h1 { font-size: 28px; font-weight: 500; margin-bottom: 20px; text-align: center; color: #1a1a1a; }
+    .page p { margin-bottom: 14px; color: #333; }
+    .page ul { margin: 10px 0 14px 20px; }
+    .page li { margin-bottom: 6px; }
+    .page .note { font-size: 14px; color: #888; font-family: 'DM Mono', monospace; }
+
+    .jspsych-survey-multi-choice-question { 
+      font-size: 16px !important; 
+      font-family: 'Fraunces', serif !important;
+      margin-bottom: 15px !important;
+    }
+    .jspsych-survey-multi-choice-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 10px 0 20px 0;
+      padding-left: 10px;
+    }
+    .jspsych-survey-multi-choice-option {
+      font-size: 14px !important;
+      font-family: 'DM Mono', monospace !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+    }
+    .jspsych-survey-multi-choice-option input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      margin: 0 !important;
+      flex-shrink: 0;
+    }
+
+    .jspsych-survey-text .jspsych-survey-text-question p {
+      font-family: 'Fraunces', serif !important;
+      font-size: 16px !important;
+      color: #333;
+    }
+
+    #jspsych-survey-html-form input[type="number"] {
+      width: 80px; padding: 6px 10px; font-size: 16px;
+      border: 1px solid #ccc; border-radius: 4px;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .jspsych-btn {
+      font-family: 'DM Mono', monospace !important;
+      font-size: 16px !important;
+      padding: 12px 28px !important;
+      margin: 30px auto 20px auto !important;
+      display: block !important;
+      background-color: #4a7ab5 !important;
+      color: white !important;
+      border: none !important;
+      border-radius: 40px !important;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .jspsych-btn:hover {
+      background-color: #3a6a9e !important;
+    }
+
+    .jspsych-content-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: auto;
+    }
+
+    .video-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .video-wrapper iframe,
+    .video-wrapper video {
+      width: 100%;
+      max-width: 800px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    
+    @media (max-width: 768px) {
+      .video-wrapper iframe,
+      .video-wrapper video {
+        height: auto;
+        min-height: 250px;
+      }
+    }
+
+    .end-screen {
+      font-family: 'Fraunces', serif; text-align: center; padding: 40px 20px;
+      max-width: 600px; margin: 0 auto;
+    }
+    .end-screen h1 { font-size: 28px; font-weight: 300; margin-bottom: 20px; color: #2a2a2a; }
+    .end-screen p { font-size: 16px; color: #555; line-height: 1.7; margin-bottom: 12px; }
+  </style>
+</head>
+<body></body>
+<script>
+
+/* ═══════════════════════════════════════════════════════════════
+   CONFIG
+   ═══════════════════════════════════════════════════════════════ */
+var DATAPIPE_EXPERIMENT_ID = "PgUsKMpOuZGD";
+
+/* ═══════════════════════════════════════════════════════════════
+   HELPERS
+   ═══════════════════════════════════════════════════════════════ */
+var L5 = ["1 – Почти или совсем нет", "2 – Немного", "3 – Умеренно", "4 – Значительно", "5 – Очень сильно"];
+
+function likertQ(prompt, labels, name) {
+  return { prompt: prompt, options: labels, required: true, name: name };
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   EXPERIMENT TIMELINE
+   ═══════════════════════════════════════════════════════════════ */
+var jsPsych = initJsPsych();
+var subject_id = jsPsych.randomization.randomID(10);
+var filename = subject_id + ".csv";
+
+/* ── PAGE 1: Consent / Приветствие ── */
+var page1 = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus: '<div class="page">' +
+    '<h1>Уважаемый участник!</h1>' +
+    '<p>Спасибо за Ваш вклад в наше исследование! Это исследование посвящено изучению взаимосвязи личностных особенностей, эмоционального состояния и просмотра видео.</p>' +
+    '<p><strong>Что Вас ждёт:</strong></p>' +
+    '<ul><li>Небольшой опросник о Вашем текущем состоянии (2–3 минуты)</li><li>Просмотр видео (3–5 минут)</li><li>Повторный опросник (2–3 минуты)</li><li>Несколько вопросов о технических аспектах прохождения (около 1 минуты)</li><li>Более подробная информация об исследовании, наша безграничная благодарность и 🐱🎉 небольшой подарок в виде подборки смешных картинок с котами 🐱🎉!</li></ul>' +
+    '<p><strong>Важные условия:</strong></p>' +
+    '<p>Пожалуйста, выделите около 12–15 минут непрерывного времени, чтобы пройти исследование без перерыва.</p>' +
+    '<p>Перед началом рекомендуется отключить уведомления на телефоне и компьютере. Выполняйте задание в тихом месте, где Вас никто не побеспокоит.</p>' +
+    '<p>Некоторые вопросы будут касаться Вашего эмоционального состояния и самочувствия.</p>' +
+    '<p>Все ответы анонимны и будут использоваться только в обобщённом виде в рамках научного исследования.</p>' +
+    '<p>Участие является полностью добровольным. Вы можете в любой момент прекратить участие, просто закрыв страницу.</p>' +
+    '<p>К участию приглашаются люди старше 18 лет.</p>' +
+    '<p>После завершения исследования Вы увидите более подробную информацию о его целях.</p>' +
+    '<p class="note">Нажмите «Далее», если Вы ознакомились с условиями и согласны принять участие в исследовании.</p>' +
+    '</div>',
+  choices: ['Далее'],
+  data: { trial_label: 'consent' }
+};
+
+/* ── PAGE 2: Demographics / Демография ── */
+var page2 = {
+  type: jsPsychSurveyHtmlForm,
+  preamble: '<div class="page"><h1>Демографические данные</h1></div>',
+  html:
+    '<div style="max-width:500px;margin:0 auto;font-family:Fraunces,serif;font-size:16px;">' +
+    '<p style="margin-bottom:8px;"><strong>Укажите Ваш пол:</strong></p>' +
+    '<label style="display:block;margin:4px 0;"><input type="radio" name="gender" value="female" required> Женщина</label>' +
+    '<label style="display:block;margin:4px 0;"><input type="radio" name="gender" value="male"> Мужчина</label>' +
+    '<label style="display:block;margin:4px 0;"><input type="radio" name="gender" value="prefer_not"> Предпочитаю не указывать</label>' +
+    '<p style="margin-top:20px;margin-bottom:8px;"><strong>Укажите Ваш возраст:</strong></p>' +
+    '<input type="number" name="age" min="18" max="99" required placeholder="Возраст">' +
+    '</div>',
+  button_label: 'Далее',
+  data: { trial_label: 'demographics' }
+};
+
+/* ── PAGE 3: PANAS PRE (сейчас) ── */
+var panas_pre_items = [
+  "увлеченный", "подавленный", "радостный", "расстроенный", "полный сил",
+  "виноватый", "испуганный", "злой", "заинтересованный", "уверенный",
+  "раздраженный", "сосредоточенный", "стыдящийся", "вдохновленный", "нервный",
+  "решительный", "внимательный", "беспокойный", "бодрый", "тревожный", "скучающий"
+];
+
+var page3 = {
+  type: jsPsychSurveyMultiChoice,
+  preamble: '<div class="page"><p>Этот опросник состоит из перечня прилагательных, которые описывают различные чувства и эмоции. Прочитайте каждое прилагательное и отметьте, в какой мере Вы чувствуете себя так <strong>сейчас</strong> (в настоящий момент).</p></div>',
+  questions: panas_pre_items.map(function(item, i) {
+    return likertQ(item, L5, 'panas_pre_' + (i+1));
+  }),
+  button_label: 'Далее',
+  data: { trial_label: 'panas_pre' }
+};
+
+/* ── PAGE 4: Инструкция перед видео ── */
+var page4 = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus: '<div class="page">' +
+    '<h1>Инструкция</h1>' +
+    '<p>Сейчас Вы увидите видео. Пожалуйста, посмотрите его внимательно.</p>' +
+    '<p>После завершения просмотра Вам будет предложено ответить на несколько вопросов о Вашем состоянии и впечатлениях.</p>' +
+    '<p class="note">Нажмите «Смотреть видео», чтобы продолжить.</p>' +
+    '</div>',
+  choices: ['Смотреть видео'],
+  data: { trial_label: 'video_instruction' }
+};
+
+/* ── PAGE 5: Видео (можно заменить на любой плеер) ── */
+/* 
+   ВАРИАНТЫ ВСТАВКИ ВИДЕО:
+   
+   1. YouTube (замените VIDEO_ID на нужный):
+      <iframe src="https://www.youtube.com/embed/VIDEO_ID?autoplay=1" ...></iframe>
+   
+   2. VK Видео (работает в РФ):
+      <iframe src="https://vkvideo.ru/video_ext.php?oid=ID_ГРУППЫ&id=ID_ВИДЕО&autoplay=1" ...></iframe>
+   
+   3. Google Диск (замените FILE_ID):
+      <iframe src="https://drive.google.com/file/d/FILE_ID/preview" ...></iframe>
+   
+   4. Локальный файл (положите video.mp4 в ту же папку):
+      <video width="800" controls autoplay><source src="video.mp4" type="video/mp4"></video>
+*/
+var page5_video = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus: '<div class="video-container">' +
+    '<div class="video-wrapper">' +
+    /* ↓↓↓ ВСТАВЬТЕ СЮДА ВАШ КОД ДЛЯ ВИДЕО ↓↓↓ */
+    '<iframe width="800" height="450" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>' +
+    /* ↑↑↑ ВСТАВЬТЕ СЮДА ВАШ КОД ДЛЯ ВИДЕО ↑↑↑ */
+    '</div>' +
+    '<p style="margin-top: 20px; font-size: 14px; color: #666; text-align: center;">После просмотра видео нажмите кнопку "Далее"</p>' +
+    '</div>',
+  choices: ['Далее'],
+  data: { trial_label: 'video_watch' }
+};
+
+/* ── PAGE 6: PANAS POST (во время выполнения задания) ── */
+var panas_post_items = [
+  "скучающий", "виноватый", "внимательный", "беспокойный", "уверенный",
+  "бодрый", "подавленный", "стыдящийся", "раздраженный", "решительный",
+  "расстроенный", "увлеченный", "злой", "вдохновленный", "сосредоточенный",
+  "испуганный", "заинтересованный", "тревожный", "нервный", "радостный", "полный сил"
+];
+
+var page6 = {
+  type: jsPsychSurveyMultiChoice,
+  preamble: '<div class="page"><p>Прочитайте, пожалуйста, каждое прилагательное и отметьте, в какой мере Вы чувствовали себя <strong>ВО ВРЕМЯ ПРОСМОТРА ВИДЕО</strong>.</p></div>',
+  questions: panas_post_items.map(function(item, i) {
+    return likertQ(item, L5, 'panas_post_' + (i+1));
+  }),
+  button_label: 'Далее',
+  data: { trial_label: 'panas_post' }
+};
+
+/* ── PAGE 7: Вопросы про отвлечение и технические неполадки ── */
+var page7 = {
+  type: jsPsychSurveyMultiChoice,
+  preamble: '<div class="page"><p>Пожалуйста, ответьте на несколько заключительных вопросов.</p></div>',
+  questions: [
+    {
+      prompt: "Были ли у Вас технические проблемы при просмотре видео (зависания, ошибки, медленная загрузка)?",
+      name: "tech_issues",
+      options: ["Да, были серьёзные технические проблемы", "Да, но незначительные, было достаточно комфортно проходить исследование", "Нет, технических проблем не было"],
+      required: true
+    },
+    {
+      prompt: "Были ли у вас отвлекающие факторы во время просмотра видео (шум, сообщения, звонки, другие люди)?",
+      name: "distractions",
+      options: ["Да, серьёзно отвлекали", "Да, но незначительно", "Нет, ничего не отвлекало"],
+      required: true
+    }
+  ],
+  button_label: 'Далее',
+  data: { trial_label: 'technical_distractions' }
+};
+
+/* ── Сохранение данных (первое, перед debrief) ── */
+var save_data = {
+  type: jsPsychPipe,
+  action: "save",
+  experiment_id: DATAPIPE_EXPERIMENT_ID,
+  filename: filename,
+  data_string: function () { return jsPsych.data.get().csv(); }
+};
+
+/* ── PAGE 8: Debrief + коты + email (оригинальная финальная страница) ── */
+var page8_debrief = {
+  type: jsPsychSurveyText,
+  preamble: '<div class="end-screen">' +
+    '<h1>Спасибо за участие в исследовании!</h1>' +
+    '<p>На самом деле мы изучали, как просмотр видео влияет на эмоциональное состояние человека, и как это связано с его личностными особенностями.</p>' +
+    '<p>Мы предполагаем (а Вы помогаете нам проверить), что:</p>' +
+    '<p>1. Эмоциональное состояние до и после просмотра видео может различаться в зависимости от содержания видео.</p>' +
+    '<p>2. Отвлекающие факторы и технические проблемы могут влиять на восприятие видео.</p>' +
+    '<div style="background: #f0f0f0; border-radius: 16px; padding: 20px; margin: 20px 0;">' +
+    '<p style="font-weight: 500; margin-bottom: 10px;">🎉 Обещанные коты! 🎉</p>' +
+    '<div style="display: flex; flex-direction: column; gap: 15px; align-items: center;">' +
+    '<img src="https://github.com/deniolly-del/myresearch/blob/main/cat1.gif?raw=true" alt="Кот 1" style="max-width: 100%; border-radius: 12px;">' +
+    '<img src="https://github.com/deniolly-del/myresearch/blob/main/cat2.jpg?raw=true" alt="Кот 2" style="max-width: 100%; border-radius: 12px;">' +
+    '<img src="https://github.com/deniolly-del/myresearch/blob/main/cat3.jpg?raw=true" alt="Кот 3" style="max-width: 100%; border-radius: 12px;">' +
+    '<img src="https://github.com/deniolly-del/myresearch/blob/main/cat4.jpg?raw=true" alt="Кот 4" style="max-width: 100%; border-radius: 12px;">' +
+    '<img src="https://github.com/deniolly-del/myresearch/blob/main/cat5.jpg?raw=true" alt="Кот 5" style="max-width: 100%; border-radius: 12px;">' +
+    '<img src="https://github.com/deniolly-del/myresearch/blob/main/cat6.jpg?raw=true" alt="Кот 6" style="max-width: 100%; border-radius: 12px;">' +
+    '</div></div>' +
+    '<p>Если Вы хотите получить информацию о результатах данного исследования, оставьте, пожалуйста, адрес Вашей электронной почты ниже.</p>' +
+    '<p>Все Ваши ответы анонимны и будут использоваться только в обобщённом виде. Если у Вас есть вопросы, Вы можете связаться со мной по адресу: deniolly@gmail.com.</p>' +
+    '<p><strong>Ещё раз спасибо!</strong></p>' +
+    '</div>',
+  questions: [
+    { prompt: "Ваш адрес электронной почты (необязательно):", name: "email", required: false, placeholder: "email@example.com" }
+  ],
+  button_label: 'Завершить',
+  data: { trial_label: 'debrief_email_memes' }
+};
+
+/* ── Сохранение финальных данных (включая email) ── */
+var save_final = {
+  type: jsPsychPipe,
+  action: "save",
+  experiment_id: DATAPIPE_EXPERIMENT_ID,
+  filename: subject_id + "_final.csv",
+  data_string: function () { return jsPsych.data.get().csv(); }
+};
+
+/* ── Финальный экран "готово" ── */
+var done = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus: '<div class="end-screen"><h1>Исследование завершено</h1><p>Вы можете закрыть эту страницу.</p></div>',
+  choices: ['Закрыть'],
+  data: { trial_label: 'done' }
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   ЗАПУСК ЭКСПЕРИМЕНТА
+   ═══════════════════════════════════════════════════════════════ */
+jsPsych.run([
+  page1,           // приветствие + согласие
+  page2,           // демография
+  page3,           // PANAS pre
+  page4,           // инструкция перед видео
+  page5_video,     // просмотр видео
+  page6,           // PANAS post
+  page7,           // вопросы про отвлечение и технические неполадки
+  save_data,       // сохранение данных на OSF
+  page8_debrief,   // debrief + коты + email
+  save_final,      // финальное сохранение (с email)
+  done             // финальный экран
+]);
+
+</script>
+</html>
