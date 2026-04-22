@@ -246,15 +246,15 @@ var page4 = {
 /* ── PAGE 5: Видео (можно заменить на любой плеер) ── */
 /* 
    4. Локальный файл (положите video.mp4 в ту же папку):
-      <video width="800" controls autoplay><source src="Bored (1).mp4" type="video/mp4"></video>
+      <video width="800" controls autoplay><source src="video.mp4" type="video/mp4"></video>
 */
 var page5_video = {
   type: jsPsychHtmlButtonResponse,
   stimulus: '<div class="video-container">' +
     '<div class="video-wrapper">' +
     /* ↓↓↓ ВСТАВЬТЕ СЮДА ВАШ КОД ДЛЯ ВИДЕО ↓↓↓ */
-    '<iframe width="800" height="450" src="Bored (1).mp4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>' +
-    /* ↑↑↑ ВСТАВЬТЕ СЮДА ВАШ КОД ДЛЯ ВИДЕО ↑↑↑ */
+<video width="800" controls autoplay><source src="video.mp4" type="video/mp4"></video>
+  /* ↑↑↑ ВСТАВЬТЕ СЮДА ВАШ КОД ДЛЯ ВИДЕО ↑↑↑ */
     '</div>' +
     '<p style="margin-top: 20px; font-size: 14px; color: #666; text-align: center;">После просмотра видео нажмите кнопку "Далее"</p>' +
     '</div>',
