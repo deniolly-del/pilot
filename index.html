@@ -254,9 +254,12 @@ var page5_video = {
   type: jsPsychHtmlButtonResponse,
   stimulus: '<div class="video-container">' +
     '<div class="video-wrapper">' +
-    '<iframe src="https://vkvideo.ru/video_ext.php?oid=-237971994&id=456239018&hash=ae4a2b2a4563dbc2&hd=3&autoplay=1&muted=0" width="1280" height="720" allow="autoplay; encrypted-media; fullscreen; picture-in-picture; screen-wake-lock;" frameborder="0" allowfullscreen></iframe>' +
+    '<video id="main-video" width="800" controls>' +
+    '<source src="https://github.com/deniolly-del/materials/raw/refs/heads/main/converted-online-video-cuttercom-1_9aDY25jA.mp4" type="video/mp4">' +
+    'Ваш браузер не поддерживает видео' +
+    '</video>' +
+    '<p style="margin-top: 15px; font-size: 14px; color: #666; text-align: center;">▶️ Нажмите "play" для просмотра<br>После окончания видео нажмите кнопку "Далее"</p>' +
     '</div>' +
-    '<p style="margin-top: 20px; font-size: 14px; color: #666; text-align: center;">После просмотра видео нажмите кнопку "Далее"</p>' +
     '</div>',
   choices: ['Далее'],
   data: { trial_label: 'video_watch' }
