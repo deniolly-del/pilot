@@ -235,8 +235,8 @@ var page4 = {
   type: jsPsychHtmlButtonResponse,
   stimulus: '<div class="page">' +
     '<h1>Инструкция</h1>' +
-    '<p>Сейчас Вы увидите видео. Пожалуйста, посмотрите его внимательно.</p>' +
-    '<p>К сожалению, сейчас у некоторых встречаются технические трудности и задержки в воспроизведении. Мы приносим извинения за возможное неудобство и просим все равно, пожалуйста, не перезагружать страницу и посмотреть видео, как оно есть.</p>' +
+    '<p>Сейчас Вы увидите видео c мужчиной, который рассказывает про свой день, оно длится около 5 минут. Пожалуйста, посмотрите его внимательно.</p>' +
+    '<p>Сейчас в наших реалиях иногда могут встречаться технические трудности и задержки в воспроизведении. Мы приносим извинения за возможное неудобство и просим все равно, пожалуйста, если вдруг видео будет заедать, не перезагружать страницу и досмотреть до конца.</p>' +
     '<p>В качестве компенсации обещаем в конце исследования показать 🐱🎉 смешных котов 🐱🎉!</p>' +
     '<p>После просмотра Вам будет предложен ещё один опросник.</p>' +
     '<p class="note">Нажмите «Смотреть видео», чтобы продолжить.</p>' +
@@ -254,15 +254,52 @@ var page5_video = {
   type: jsPsychHtmlButtonResponse,
   stimulus: '<div class="video-container">' +
     '<div class="video-wrapper">' +
-    '<video id="main-video" width="800" controls>' +
+    '<video id="main-video" width="800">' +
     '<source src="https://github.com/deniolly-del/materials/raw/refs/heads/main/converted-online-video-cuttercom-1_9aDY25jA.mp4" type="video/mp4">' +
     'Ваш браузер не поддерживает видео' +
     '</video>' +
-    '<p style="margin-top: 15px; font-size: 14px; color: #666; text-align: center;">▶️ Нажмите "play" для просмотра<br>После окончания видео нажмите кнопку "Далее"</p>' +
+    '<div style="display: flex; justify-content: center; gap: 10px; margin-top: 15px;">' +
+    '<button id="play-pause-btn" style="padding: 10px 24px; background: #4a7ab5; color: white; border: none; border-radius: 40px; font-family: monospace; cursor: pointer;">▶ Play</button>' +
+    '</div>' +
+    '<p style="margin-top: 15px; font-size: 14px; color: #666; text-align: center;">После окончания видео нажмите кнопку "Далее"</p>' +
     '</div>' +
     '</div>',
   choices: ['Далее'],
-  data: { trial_label: 'video_watch' }
+  data: { trial_label: 'video_watch' },
+  on_load: function() {
+    var video = document.getElementById('main-video');
+    var playPauseBtn = document.getElementById('play-pause-btn');
+    
+    // Запрещаем ускорение/замедление через клавиши
+    video.playbackRate = 1.0;
+    video.addEventListener('ratechange', function() {
+      if (video.playbackRate !== 1.0) {
+        video.playbackRate = 1.0;
+      }
+    });
+    
+    // Кнопка Play/Pause
+    playPauseBtn.addEventListener('click', function() {
+      if (video.paused) {
+        video.play();
+        playPauseBtn.textContent = '⏸ Pause';
+      } else {
+        video.pause();
+        playPauseBtn.textContent = '▶ Play';
+      }
+    });
+    
+    // Когда видео закончилось — обновляем кнопку
+    video.addEventListener('ended', function() {
+      playPauseBtn.textContent = '▶ Play';
+      playPauseBtn.disabled = false;
+    });
+    
+    // Скрываем стандартный контекстное меню (правый клик)
+    video.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+    });
+  }
 };
 /* ── PAGE 6: PANAS POST (во время выполнения задания) ── */
 var panas_post_items = [
